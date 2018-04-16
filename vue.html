@@ -18,6 +18,7 @@
 <head>
 	<title>vue.js</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta charset="UTF-8" />
 	<style type="text/css">
 		
 		body{
@@ -45,8 +46,8 @@
 
 <div id="app">
 
-	<div id="pullContainer" v-show="pullshow">
-		准备加载
+	<div id="pullContainer" v-show="pullshow" v-text="pull_message">
+
 	</div>
 
 	<div is="info" :data="list">
@@ -59,9 +60,9 @@
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script type="text/javascript" src="../js/scroll.js"></script>
-<script type="text/javascript" src="../js/pull.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/javascript" src="./js/scroll.js"></script>
+<script type="text/javascript" src="./js/pull.js"></script>
 
 <!-- 데이터 로드 템플릿 -->
 <script type="text/x-template" id="info_load_tpl" >
@@ -103,19 +104,39 @@
 			,loadStatus :true  //로드 상태
 			,list :[]	//데이터
 			,pullshow : false
+			,pull_message : '准备刷新'
+			,pull_message_text : '准备刷新'
+			,pull_message_complete_text : '正在刷新'
+
 		}
 		,created:function(){
+
 			var that = this;
+
 			that.init();
 
-			document.querySelector('#pageloading').remove();
-			that.$ScrollStart( that , function( res ){
-				that.addInfo();
-			});
 		}
 		,mounted:function(){
+
 			var that = this;
-			that.$PullStart( that );
+
+            document.querySelector('#pageloading').remove();
+
+            that.$ScrollStart( that , function( res ){
+
+                that.addInfo();
+
+            });
+
+			that.$PullStart( that , function( e ){
+
+                that.pull_message = that.pull_message_complete_text;
+
+				setTimeout(function(){
+					that.pullshow = false;
+				},500);
+
+			});
 
 		}
 		,methods:{

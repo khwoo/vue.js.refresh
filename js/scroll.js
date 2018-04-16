@@ -45,9 +45,7 @@ scroll.install = function( Vue , options ){
 	var getScrollTop = function( dom ){
 
 		var _top = 0;
-
-		_top = dom.documentElement.scrollTop || 0;
-
+		_top = ( dom.documentElement.scrollTop || 0 ) + ( document.body.scrollTop || 0 );
 		return _top;
 
 	}
