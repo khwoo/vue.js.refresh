@@ -1,0 +1,160 @@
+
+
+				<!-- //var apiURL = 'https://api.github.com/repos/vuejs/vue/commits?per_page=3&sha=master';
+				// var apiURL = 'http://gank.io/api/data/%E7%A6%8F%E5%88%A9/100/1';
+				// 	var xhr = new XMLHttpRequest()
+				// 	var self = this
+				// 	xhr.open('GET', apiURL )
+				// 	xhr.onload = function () {
+
+				// 		console.log(xhr.responseText);
+
+				// 	}
+
+				//   xhr.send(); -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>vue.js</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<style type="text/css">
+		
+		body{
+			margin: 0;
+			padding: 0;
+		}
+		#pullContainer {
+
+	    margin: 20px auto;
+	    text-align: center;
+	    font-weight: bold;
+	    color: red;
+	    font-size: 14px;
+
+		}
+
+	</style>
+	<script type="text/javascript">
+		
+		document.write('<div id="pageloading" style="margin:auto; text-align:center;" >loading</div>');
+
+	</script>
+</head>
+<body>
+
+<div id="app">
+
+	<div id="pullContainer" v-show="pullshow">
+		加载中
+	</div>
+
+	<div is="info" :data="list">
+
+	</div>
+
+	<div is="loadcomponent" :data="loadStatus">
+
+	</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/javascript" src="../js/scroll.js"></script>
+<script type="text/javascript" src="../js/pull.js"></script>
+
+<!-- 데이터 로드 템플릿 -->
+<script type="text/x-template" id="info_load_tpl" >
+	
+	<div v-show="!data" style="margin:auto;">
+		<div style="padding:15px 10px; border:1px solid #eee; text-align:center; ">
+			加载中...
+		</div>
+	</div>
+
+</script>
+
+<!-- 데이터 템플릿 -->
+<script type="text/x-template" id="info_tpl">
+	
+	<div style="margin:auto;">
+	
+		<div v-for="item in data" style="padding:15px 10px; border:1px solid #eee; text-align:center; ">
+			<a :href="item.href">
+			{{	item.id	}}&nbsp;&nbsp;
+			{{	item.name	}}&nbsp;&nbsp;
+			{{	item.value	}}
+			</a>
+		</div>
+	</div>
+
+</script>
+
+<script type="text/javascript">
+
+	Vue.use( scroll );
+
+	Vue.use( pull , {} );
+	var vue = new Vue({
+		el : '#app'
+		,data :{
+			pageNo : 1	//페이지 
+			,loadValue : 100 //로드 위치
+			,loadStatus :true  //로드 상태
+			,list :[]	//데이터
+			,pullshow : false
+		}
+		,created:function(){
+			var that = this;
+			that.init();
+
+			document.querySelector('#pageloading').remove();
+			that.$ScrollStart( that , function( res ){
+				that.addInfo();
+			});
+		}
+		,mounted:function(){
+			var that = this;
+			that.$PullStart( that );
+
+		}
+		,methods:{
+
+			init:function(){
+				var that = this;
+				let list = new Array();
+				for(let i = 0 ; i < 30 ;i++ ){
+					list.push( { id : i + 1 , name : 'vue.js',value : '1000원' , href : 'http://www.baidu.com' } );
+				}
+				that.list = list;
+			}
+			,addInfo:function(){
+				var that = this; 
+				let list = that.list;
+				that.pageNo += 1; //页数加1
+				setTimeout(function(){
+					for(let i = 0 ; i < 10 ; i++ ){
+						list.push( { id : 1 + list[list.length - 1 ].id , name : 'vue.js',value : '1000원' } );
+					}
+					console.log('加载数据完成....................................');
+					that.loadStatus = true;
+				},2000);
+				that.loadStatus = false;
+			}
+		}
+		,components:{
+			'info' : {
+				props:['data']
+				,template: '#info_tpl'
+			}
+			,'loadcomponent':{
+				props:['data']
+				,template : '#info_load_tpl'
+			}
+		}
+	});
+
+</script>
+
+</body>
+</html>
